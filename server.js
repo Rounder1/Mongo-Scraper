@@ -3,6 +3,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var logger = require("morgan");
 // var mongoose = require("mongoose");
+var mongojs = require("mongojs");
 var cheerio = require("cheerio");
 var request = require("request");
 
@@ -16,12 +17,31 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Use express.static to serve the public folder as a static directory
 //app.use(express.static("public"));
 
+// Database configuration
+var databaseUrl = "mongoScraper";
+var collections = ["scrapedLinks"];
+
+// Hook mongojs configuration to the db variable
+var db = mongojs(databaseUrl, collections);
+db.on("error", function(error) {
+  console.log("Database Error:", error);
+});
+
 
 // Routes:
 
 // Send user to home page
 app.get("/", function(req, res){
     res.send("Site is live");
+});
+
+// Get data from database
+app.get("/all", function(req, res){
+    db.scrapedLinks.find({}, function(err, data){
+        // Send error if there is a problam, else return data
+        if (err) console.log(err);
+        else res.json(data);
+    });
 });
 
 // Scrape site for news
@@ -32,8 +52,6 @@ app.get("/scrape", function(req, res){
 
         // Load HTML into a cheerio and save as variable 
         var $ = cheerio.load(html);
-        // Empty array to store scraped data
-        var results = [];
 
         // Have cheerio find each a tag with class "storylink" in the html 
         $("a.storylink").each(function(i, element){
@@ -42,15 +60,20 @@ app.get("/scrape", function(req, res){
             var title = $(element).text();
             var link = $(element).attr("href");
 
-            // Push the titles and links into the results array
-            results.push( {title: title, link: link});
+            // If both were scraped successfully
+            if (title && link) {
+                // Insert into mongo database
+                db.scrapedLinks.insert({
+                    title: title, 
+                    link: link
+                },
+                function(err) {
+                    // Send error if there is a problam, else say it worked
+                    if (err) res.send(err);
+                    else res.send("it worked!");         
+                });
+            }
         });
-
-        //TEST TO SEE IF IT WORKED
-        //console.log(results);
-
-        // Send data back to the front page
-        res.send(results);
     });
 });
 
@@ -59,4 +82,4 @@ app.get("/scrape", function(req, res){
 // Start the server
 app.listen(PORT, function() {
     console.log("App running on port ", PORT);
-  });
+});
