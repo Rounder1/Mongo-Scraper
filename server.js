@@ -14,8 +14,8 @@ var app = express();
 app.use(logger("dev"));
 // Use body-parser for handling form submissions
 app.use(bodyParser.urlencoded({ extended: true }));
-// Use express.static to serve the public folder as a static directory
-//app.use(express.static("public"));
+// Use express.static to serve the index.html page in the public folder
+app.use(express.static("public"));
 
 // Database configuration
 var databaseUrl = "mongoScraper";
@@ -29,11 +29,6 @@ db.on("error", function(error) {
 
 
 // Routes:
-
-// Send user to home page
-app.get("/", function(req, res){
-    res.send("Site is live");
-});
 
 // Get data from database
 app.get("/all", function(req, res){
