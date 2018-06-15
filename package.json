@@ -1,0 +1,30 @@
+{
+  "name": "mongo-scraper",
+  "version": "1.0.0",
+  "description": "Mongo Scraper App",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rounder1/Mongo-Scraper.git"
+  },
+  "author": "David Toler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rounder1/Mongo-Scraper/issues"
+  },
+  "homepage": "https://github.com/Rounder1/Mongo-Scraper#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.3",
+    "generate-gitignore": "^0.2.6",
+    "mongojs": "^2.6.0",
+    "mongoose": "^5.1.5",
+    "morgan": "^1.9.0",
+    "nodemon": "^1.17.5",
+    "request": "^2.87.0"
+  }
+}
